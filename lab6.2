@@ -1,0 +1,61 @@
+''' код для счета(2)'''
+import pygame
+import sys
+import numpy as np
+from pygame.draw import *
+from random import randint
+pygame.init()
+pygame.font.init()
+
+
+FPS = 2
+screen = pygame.display.set_mode((1200, 900))
+
+f1 = pygame.font.Font(None, 24)
+#text1 = f1.render('k', True, (180,0,0))
+
+'''cortage of colors'''
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
+MAGENTA = (255, 0, 255)
+CYAN = (0, 255, 255)
+BLACK = (0, 0, 0)
+COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+
+def new_ball():
+    '''рисует новый шарик '''
+    global x, y, r
+    x = randint(100, 1100)
+    y = randint(100, 900)
+    r = randint(10, 100)
+    color = COLORS[randint(0, 5)]
+    circle(screen, color, (x, y), r)
+    
+def click(event):
+    return(x, y, r)    
+
+pygame.display.update()
+clock = pygame.time.Clock()
+finished = False
+k=0
+
+while not finished:
+    clock.tick(FPS)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                x1, y1, r = click(event)
+                x2, y2 = event.pos
+            if (x2-x1)**2+(y2-y1)**2<= r**2:
+                k = k+1 
+    new_ball()
+    text1 = f1.render('Количество очков: '+str(k), True, (180,0,0))
+    screen.blit(text1,(10,50))
+    pygame.display.update()
+    screen.fill(BLACK)
+
+pygame.quit()
