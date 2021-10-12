@@ -1,0 +1,90 @@
+'''шарики отбиваются о стен и исчезает, если по нему попасть'''
+import pygame
+import sys
+import numpy as np
+from pygame.draw import *
+from random import randint
+pygame.init()
+pygame.font.init()
+
+
+FPS = 10
+screen = pygame.display.set_mode((1200, 900))
+
+f1 = pygame.font.Font(None, 24)
+#text1 = f1.render('k', True, (180,0,0))
+
+'''cortage of colors'''
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
+MAGENTA = (255, 0, 255)
+CYAN = (0, 255, 255)
+BLACK = (0, 0, 0)
+COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+color = COLORS[randint(0, 5)]
+
+
+def new_ball():
+    '''рисует новый шарик '''
+    global x, y, r
+    x = randint(100, 1100)
+    y = randint(100, 900)
+    r = randint(10, 100)
+    color = COLORS[randint(0, 5)]
+    circle(screen, color, (x, y), r)
+    
+def ball():
+    global x2, y2, r2, color2
+    x2 = x
+    y2 = y
+    r2 = r
+    color2 = color
+    circle(screen, color2, (x2,y2), r2)
+    
+    
+def click(event):
+    return(x, y, r)    
+
+pygame.display.update()
+clock = pygame.time.Clock()
+finished = False
+dx = randint(1, 10)
+dy = randint(1, 10)
+k=0
+
+
+new_ball()
+ball()
+while not finished:
+    clock.tick(FPS)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+            
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                x, y, r = click(event)
+                x1, y1 = event.pos
+                if (x2-x1)**2+(y2-y1)**2<= r2**2:
+                    k = k+1 
+                x2= -100
+                y2 = -100
+                dx = 0
+                dy = 0
+
+    x2+= dx
+    y2+= dy
+    circle(screen, color2, (x2, y2), r2)
+    if x2>= (1200-r2) or x2 < r2:
+        dx *=-1
+    if y2>= (900 - r2) or y2 < r2:
+        dy *= -1 
+        
+    text1 = f1.render('Количество очков: '+str(k), True, (180,0,0))
+    screen.blit(text1,(10,50))
+    pygame.display.update()
+    screen.fill(BLACK)
+
+pygame.quit()
