@@ -4,9 +4,11 @@ from random import randint
 pygame.init()
 pygame.font.init()
 
-text = pygame.font.Font(None, 36)
-FPS = 2
+f1 = pygame.font.Font(None, 24)
+FPS = 10
 screen = pygame.display.set_mode((1200, 900))
+
+'''cortage of colors'''
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
@@ -15,44 +17,46 @@ MAGENTA = (255, 0, 255)
 CYAN = (0, 255, 255)
 BLACK = (0, 0, 0)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+color = COLORS[randint(0, 5)]
 
 
 
 def click(event):
     return(x, y, r)
 
-def smem(x, y, r, vx, vy):
-    if x + r >= 1200:
-        vx *= -1
-    elif x - r <= 0:
-        vx *= -1
-    if y + r >= 900:
-        vy *= -1
-    elif y - r <= 0:
-        vy *= -1
-    return(vx, vy)
+def smem(x, y, r, dx, dy):
+    '''функция отбивания мячика от стены'''
+    if x >= (1200 - r) or x <= r :
+        dx *= -1
+    if y >= (900 - r) or y <= r :
+        dy *= -1
+    return(dx, dy)
+
 
 def ball(coopl):
-    x, y, r, vx, vy, color = coopl
-    x += vx
-    y += vy
+    x, y, r, dx, dy, color = coopl
+    x += dx
+    y += dy
     circle(screen, color, (x, y), r)
-    vx, vy = smem(x, y, r, vx, vy)
-    coopl = (x, y, r, vx, vy, color)
+    dx, dy = smem(x, y, r, dx, dy)
+    coopl = (x, y, r, dx, dy, color)
     return coopl
     
+    
 def gener_ballxy():
+    ''' генерация мячиков '''
     x = randint(100,700)
     y = randint(100,500)
     r = randint(30,50)
-    vx = randint(-10, 10)
-    vy = randint(-10, 10)
+    dx = randint(-10, 10)
+    dy = randint(-10, 10)
     color = COLORS[randint(0, 5)]
-    coopl = (x, y, r, vx, vy, color)
+    coopl = (x, y, r, dx, dy, color)
     return coopl
 
 def prov(coopl):
-    x, y, r, vx, vy, color = coopl
+    '''проверка на попадание в мячик'''
+    x, y, r, dx, dy, color = coopl
     x2, y2 = event.pos
     if (x-x2)**2+(y-y2)**2<=r**2:
         return True
@@ -62,29 +66,25 @@ pygame.display.update()
 clock = pygame.time.Clock()
 finished = False
 k=0
-coopl1 = gener_ballxy()
-coopl2 = gener_ballxy()
-coopl3 = gener_ballxy()
-coopl4 = gener_ballxy()
-coopl5 = gener_ballxy()
 
 clock.tick(FPS)
-sms = text.render("количество очков: " + str(k), True, (255, 255, 0))
-screen.blit(sms, (0, 0))
+text1 = f1.render('Количество очков: '+str(k), True, (180,0,0))
+screen.blit(text1, (10, 50))
 pygame.display.update()
 screen.fill(BLACK)
 c = 0
-g = 6
+g = 3
 gh = [gener_ballxy() for i in range(g)]
+#создает g мячиков
 
 
 
 while True:
-    sms = text.render("количество очков: " + str(k), True, (255, 255, 0))
+    text1 = f1.render('Количество очков: '+str(k), True, (180,0,0))
     clock.tick(40)
     for i in range(g):
         gh[i] = ball(gh[i])
-    screen.blit(sms, (0, 0))
+    screen.blit(text1, (10, 50))
     pygame.display.update()
     screen.fill(BLACK)
     for event in pygame.event.get():
@@ -99,12 +99,9 @@ while True:
                         c= 1
                         break
 
-    if k == g:
+    if k == g: #так как за каждый мячик можно набрать по 1 очку
         break
                         
         
-        
-    
-    
-
+       
 pygame.quit()
